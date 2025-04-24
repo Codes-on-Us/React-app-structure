@@ -44,7 +44,8 @@
     ├─  pages/                  # route-level modules (one folder per route)
     │   ├─  HomePage/            
     │   │   ├─ HomePage.js      # entry component
-    │   │   ├─ HomePage.test.js     
+    │   │   ├─ HomePage.test.js
+    │   │   ├─ HomePage.actions.js     
     │   │   ├─ HomePage.module.scss  
     │   │   ├─ modules /        # sub-components for home
     │   │   │   ├─ HeroBanner.js 
@@ -58,3 +59,27 @@
     ├─  App.js                   # application shell: router + providers
     └─  index.js                 # ReactDOM.render + global CSS imports
 
+
+
+
+
+### Absolute Imports
+
+Instead of using relative imports like this:
+
+    import  { Button }  from  "../../ui/button";
+
+Use absolute imports to avoid guesswork and simplify refactoring:
+
+    import  { Button }  from  "@features/ui/button";
+
+Set up absolute imports with a  `jsconfig.json`  or  `tsconfig.json`  file.
+
+    {
+      "compilerOptions":  {
+      "baseUrl":  ".",
+      "paths":  {
+	      "@features/*":  ["src/features/*"]
+			}
+		}
+    }
