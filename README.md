@@ -8,7 +8,7 @@
     │   ├─ fonts/               # font files
     │   └─ global.css           # global styles
     │
-    ├─  components/             # reusable UI primitives
+    ├─  UIComponents/           # reusable UI primitives
     │   ├─  Button/              
     │   │   ├─ Button.js        
     │   │   ├─ Button.test.js   
@@ -40,15 +40,15 @@
     │   ├─ authSlice.js         
     │   ├─ dashboardSlice.js    
     │   └─ middleware.js        
-    │
+    ├─  Components/             # common components
     ├─  pages/                  # route-level modules (one folder per route)
     │   ├─  HomePage/            
     │   │   ├─ HomePage.js      # entry component
     │   │   ├─ HomePage.test.js
     │   │   ├─ HomePage.actions.js     
     │   │   ├─ HomePage.module.scss
-    │   │   ├─ Stores/          # Redux
-    │   │   ├─ modules /        # sub-components for home
+    │   │   ├─ Stores/          # Redux slices
+    │   │   ├─ Components /     # sub-components for home
     │   │   │   ├─ HeroBanner.js 
     │   │   |   ├─ HeroBanner.module.scss    
     │   │   │   └─ FeaturedList.js
