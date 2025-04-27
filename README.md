@@ -46,12 +46,15 @@
     │   │   ├─ HomePage.js      # entry component
     │   │   ├─ HomePage.test.js
     │   │   ├─ HomePage.actions.js     
-    │   │   ├─ HomePage.module.scss  
+    │   │   ├─ HomePage.module.scss
+    │   │   ├─ Stores/          # Redux
     │   │   ├─ modules /        # sub-components for home
     │   │   │   ├─ HeroBanner.js 
     │   │   |   ├─ HeroBanner.module.scss    
     │   │   │   └─ FeaturedList.js
     ├─  utils /                  # app-wide helpers & constants
+    │   ├─ Extensions/
+    │   ├─ Assistances /
     │   ├─ formatDate.js         
     │   ├─ apiClient.js          
     │   └─ constants.js          
