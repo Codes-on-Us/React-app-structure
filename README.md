@@ -58,7 +58,15 @@
     │   ├─ formatDate.js         
     │   ├─ apiClient.js          
     │   └─ constants.js          
-    │
+    ├── types/
+    │   ├── Auth/
+    │   │   ├── dto.ts
+    │   │   ├── model.ts
+    │   │   └── index.ts
+    │   ├── User/
+    │   │   ├── permissions.ts
+    │   │   ├── profile.ts
+    │   │   └── index.ts
     ├─  App.js                   # application shell: router + providers
     └─  index.js                 # ReactDOM.render + global CSS imports
 
