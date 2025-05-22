@@ -94,3 +94,8 @@ Set up absolute imports with a  `jsconfig.json`  or  `tsconfig.json`  file.
 			}
 		}
     }
+
+
+
+![Branchs Approach
+](https://raw.githubusercontent.com/Codes-on-Us/React-app-structure/refs/heads/main/branchsApproach.png)
