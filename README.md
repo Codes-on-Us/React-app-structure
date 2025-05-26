@@ -96,6 +96,15 @@ Set up absolute imports with a  `jsconfig.json`  or  `tsconfig.json`  file.
     }
 
 
+### branches
 
 ![Branchs Approach
 ](https://raw.githubusercontent.com/Codes-on-Us/React-app-structure/refs/heads/main/branchsApproach.png)
+
+
+### New future
+
+ 1. Clone live branch 
+ 2. Template for branch name : {Task number} - {Task title}
+ 3. Move task to test column or add test tag to test by tester.
+    
