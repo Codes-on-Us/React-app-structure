@@ -150,3 +150,81 @@ interface UserProfileProps {
 }
 ```
 
+#### Naming Conventions
+Use clear, descriptive, and consistent naming conventions throughout the project to improve code readability and maintainability.
+
+**Components & Files:**
+- Use PascalCase for component names and file names
+- Use descriptive names that clearly indicate the component's purpose
+- Avoid abbreviations and generic names
+
+```typescript
+// ✅ Good - Clear, descriptive names
+UserProfileCard.tsx
+OrderConfirmationModal.tsx
+ProductCatalogFilter.tsx
+
+// ❌ Bad - Unclear, abbreviated names
+UPC.tsx
+Modal.tsx
+Filter.tsx
+```
+
+**Variables & Functions:**
+- Use camelCase for variables, functions, and methods
+- Use descriptive names that explain what the variable holds or what the function does
+- Boolean variables should start with `is`, `has`, `can`, or `should`
+
+```typescript
+// ✅ Good - Descriptive naming
+const userAuthToken = getAuthToken();
+const isUserLoggedIn = checkAuthStatus();
+const hasUserPermission = validateUserAccess();
+const canUserEditProfile = checkEditPermissions();
+
+const handleUserProfileUpdate = (userData: User) => { ... };
+const fetchUserOrderHistory = async (userId: string) => { ... };
+
+// ❌ Bad - Generic, unclear naming
+const token = getToken();
+const status = check();
+const flag = validate();
+
+const handle = (data: any) => { ... };
+const fetch = async (id: string) => { ... };
+```
+
+**Constants & Enums:**
+- Use UPPER_SNAKE_CASE for constants
+- Use PascalCase for enums with descriptive names
+
+```typescript
+// ✅ Good - Clear constant and enum naming
+const API_BASE_URL = 'https://api.example.com';
+const MAX_RETRY_ATTEMPTS = 3;
+const DEFAULT_PAGE_SIZE = 20;
+
+enum UserRole {
+  ADMIN = 'admin',
+  MODERATOR = 'moderator',
+  USER = 'user'
+}
+
+enum OrderStatus {
+  PENDING = 'pending',
+  PROCESSING = 'processing',
+  SHIPPED = 'shipped',
+  DELIVERED = 'delivered'
+}
+
+// ❌ Bad - Generic naming
+const URL = 'https://api.example.com';
+const MAX = 3;
+
+enum Status {
+  A = 'admin',
+  M = 'moderator',
+  U = 'user'
+}
+```
+
