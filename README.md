@@ -100,10 +100,53 @@ Set up absolute imports with a  `jsconfig.json`  or  `tsconfig.json`  file.
 ![Branchs Approach
 ](https://raw.githubusercontent.com/Codes-on-Us/React-app-structure/refs/heads/main/branchsApproach.png)
 
-
 ### New future
 
  1. Clone live branch
  2. Template for branch name : {Task number} - {Task title}
  3. Move task to test column or add test tag to test by tester.
+
+
+
+### Clean Code Principles
+
+#### Single Responsibility Principle
+Each file should contain only one class or one function component. Avoid placing multiple function components in a single file to maintain clarity and improve maintainability.
+
+```typescript
+// ✅ Good - One component per file
+// UserProfile.tsx
+export const UserProfile: React.FC<UserProfileProps> = ({ user }) => {
+  return <div>{user.name}</div>;
+};
+
+// ❌ Bad - Multiple components in one file
+// UserComponents.tsx
+export const UserProfile = ({ user }) => <div>{user.name}</div>;
+export const UserList = ({ users }) => <div>{users.length}</div>;
+export const UserCard = ({ user }) => <div>{user.email}</div>;
+```
+
+#### Type Safety and Organization
+- Store all types in the correct location within the `Types/` directory structure
+- Use proper TypeScript types throughout the project
+- **Never use `any` type** - always define specific interfaces and types
+- Import types from their designated locations using absolute imports
+
+```typescript
+// ✅ Good - Proper type usage
+import { User } from '@/Types/User';
+import { ApiResponse } from '@/Types/Api';
+
+interface UserProfileProps {
+  user: User;
+  onUpdate: (user: User) => Promise<ApiResponse<User>>;
+}
+
+// ❌ Bad - Using any type
+interface UserProfileProps {
+  user: any;
+  onUpdate: (user: any) => any;
+}
+```
 
