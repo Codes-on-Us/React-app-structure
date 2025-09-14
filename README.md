@@ -620,3 +620,147 @@ const OrderList: React.FC = () => {
 - **Maintainability**: Easier to add/remove state without changing component signatures
 - **Testability**: Components can be tested independently of parent state
 
+#### Concurrent Async Operations
+Run multiple async tasks simultaneously using `Promise.all()` and `Promise.allSettled()` for better performance, but use with caution.
+
+**Running Async Tasks Concurrently:**
+- Use `Promise.all()` when all tasks must succeed
+- Use `Promise.allSettled()` when some tasks can fail
+- Be mindful of API rate limits and server load
+- Consider using sequential processing for sensitive operations
+
+```typescript
+// ❌ Bad - Sequential async calls (slow)
+const loadUserData = async (userId: string) => {
+  const user = await fetchUser(userId);
+  const orders = await fetchUserOrders(userId);
+  const preferences = await fetchUserPreferences(userId);
+  const notifications = await fetchUserNotifications(userId);
+
+  return { user, orders, preferences, notifications };
+};
+
+// ✅ Good - Concurrent async calls with Promise.all (fast)
+const loadUserData = async (userId: string) => {
+  try {
+    const [user, orders, preferences, notifications] = await Promise.all([
+      fetchUser(userId),
+      fetchUserOrders(userId),
+      fetchUserPreferences(userId),
+      fetchUserNotifications(userId)
+    ]);
+
+    return { user, orders, preferences, notifications };
+  } catch (error) {
+    console.error('Failed to load user data:', error);
+    throw error;
+  }
+};
+
+// ✅ Good - Using Promise.allSettled for partial failures
+const loadUserDataWithFallbacks = async (userId: string) => {
+  const results = await Promise.allSettled([
+    fetchUser(userId),
+    fetchUserOrders(userId),
+    fetchUserPreferences(userId),
+    fetchUserNotifications(userId)
+  ]);
+
+  return {
+    user: results[0].status === 'fulfilled' ? results[0].value : null,
+    orders: results[1].status === 'fulfilled' ? results[1].value : [],
+    preferences: results[2].status === 'fulfilled' ? results[2].value : defaultPreferences,
+    notifications: results[3].status === 'fulfilled' ? results[3].value : []
+  };
+};
+
+// ✅ Good - Custom hook for concurrent data loading
+const useUserData = (userId: string) => {
+  const [data, setData] = useState<UserData | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const loadData = async () => {
+      setLoading(true);
+      setError(null);
+
+      try {
+        const userData = await loadUserDataWithFallbacks(userId);
+        setData(userData);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to load data');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (userId) {
+      loadData();
+    }
+  }, [userId]);
+
+  return { data, loading, error };
+};
+```
+
+**⚠️ Important Considerations:**
+
+**API Rate Limits:**
+```typescript
+// ❌ Dangerous - May overwhelm server with too many concurrent requests
+const loadManyUsers = async (userIds: string[]) => {
+  return Promise.all(userIds.map(id => fetchUser(id))); // Could be 100+ requests
+};
+
+// ✅ Better - Batch processing with controlled concurrency
+const loadManyUsers = async (userIds: string[], batchSize = 5) => {
+  const results: User[] = [];
+
+  for (let i = 0; i < userIds.length; i += batchSize) {
+    const batch = userIds.slice(i, i + batchSize);
+    const batchResults = await Promise.all(batch.map(id => fetchUser(id)));
+    results.push(...batchResults);
+
+    // Optional: Add delay between batches
+    if (i + batchSize < userIds.length) {
+      await new Promise(resolve => setTimeout(resolve, 100));
+    }
+  }
+
+  return results;
+};
+```
+
+**Error Handling:**
+```typescript
+// ✅ Good - Proper error handling with timeouts
+const fetchWithTimeout = <T>(promise: Promise<T>, timeoutMs = 5000): Promise<T> => {
+  return Promise.race([
+    promise,
+    new Promise<never>((_, reject) =>
+      setTimeout(() => reject(new Error('Request timeout')), timeoutMs)
+    )
+  ]);
+};
+
+const loadUserDataSafely = async (userId: string) => {
+  const results = await Promise.allSettled([
+    fetchWithTimeout(fetchUser(userId), 3000),
+    fetchWithTimeout(fetchUserOrders(userId), 5000),
+    fetchWithTimeout(fetchUserPreferences(userId), 2000)
+  ]);
+
+  // Handle individual failures gracefully
+  return results;
+};
+```
+
+**Best Practices:**
+- **Use Promise.all()** when all operations must succeed
+- **Use Promise.allSettled()** when partial failures are acceptable
+- **Implement timeouts** to prevent hanging requests
+- **Respect API rate limits** with batch processing
+- **Handle errors gracefully** with proper fallbacks
+- **Consider server load** - don't overwhelm backend services
+
