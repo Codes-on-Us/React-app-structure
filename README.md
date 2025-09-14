@@ -1,23 +1,23 @@
 
 ## **React app sructure**
 
-      
+
     src/
-    ├─  assets/           
+    ├─  assets/
     │   ├─ images/              # image files
     │   ├─ fonts/               # font files
     │   └─ global.css           # global styles
     │
     ├─  UIComponents/           # reusable UI primitives
-    │   ├─  Button/              
-    │   │   ├─ Button.js        
-    │   │   ├─ Button.test.js   
+    │   ├─  Button/
+    │   │   ├─ Button.js
+    │   │   ├─ Button.test.js
     │   │   ├─ Button.module.css
     │   │   └─ Button.stories.js
     │   └─  index.js             # barrel export
     │
     ├─  layouts/                 # master page shells + layout-specific features
-    │   ├─  AdminLayout/        
+    │   ├─  AdminLayout/
     │   │   ├─  AdminLayout.js
     │   │   ├─  AdminLayout.test.js
     │   │   ├─  AdminLayout.css
@@ -26,7 +26,7 @@
     │   │       ├─ UserMenu.js
     │   │       └─ NotificationsBell.js
     │   │
-    │   └─  LoginLayout/        
+    │   └─  LoginLayout/
     │       ├─ LoginLayout.js
     │       ├─ LoginLayout.test.js
     │       ├─ LoginLayout.css
@@ -37,28 +37,29 @@
     │
     ├─  store/                  # Redux Toolkit setup & slices
     │   ├─ index.js             # configureStore + root reducer
-    │   ├─ authSlice.js         
-    │   ├─ dashboardSlice.js    
-    │   └─ middleware.js        
+    │   ├─ authSlice.js
+    │   ├─ dashboardSlice.js
+    │   └─ middleware.js
     ├─  Components/             # common components
     ├─  pages/                  # route-level modules (one folder per route)
-    │   ├─  HomePage/            
-    │   │   ├─ HomePage.js      # entry component
-    │   │   ├─ HomePage.test.js
-    │   │   ├─ HomePage.actions.js     
+    │   ├─  HomePage/
+    │   │   ├─ HomePage.tsx      # entry component
+    │   │   ├─ HomePage.test.ts
     │   │   ├─ HomePage.module.scss
     │   │   ├─ Stores/          # Redux slices
+	│   │   ├─ Types/
     │   │   ├─ Components /     # sub-components for home
-    │   │   │   ├─ HeroBanner.js 
-    │   │   |   ├─ HeroBanner.module.scss    
-    │   │   │   └─ FeaturedList.js
-    ├─  utils /                  # app-wide helpers & constants
+    │   │   │   ├─ HeroBanner.ts
+    │   │    |    ├─ HeroBanner.module.scss
+    │   │   │   └─ FeaturedList.ts
+    ├─  Hooks /
+	├─  utils /                  # app-wide helpers & constants
     │   ├─ Extensions/
     │   ├─ Assistances /
-    │   ├─ formatDate.js         
-    │   ├─ apiClient.js          
-    │   └─ constants.js          
-    ├── types/
+    │   ├─ formatDate.ts
+    │   ├─ apiClient.ts
+    │   └─ constants.ts
+    ├─ Types/           #shared and global types
     │   ├── Auth/
     │   │   ├── dto.ts
     │   │   ├── model.ts
@@ -67,10 +68,8 @@
     │   │   ├── permissions.ts
     │   │   ├── profile.ts
     │   │   └── index.ts
-    ├─  App.js                   # application shell: router + providers
-    └─  index.js                 # ReactDOM.render + global CSS imports
-
-
+    ├─  App.ts                   # application shell: router + providers
+    └─  index.ts                 # ReactDOM.render + global CSS imports
 
 
 
@@ -104,7 +103,7 @@ Set up absolute imports with a  `jsconfig.json`  or  `tsconfig.json`  file.
 
 ### New future
 
- 1. Clone live branch 
+ 1. Clone live branch
  2. Template for branch name : {Task number} - {Task title}
  3. Move task to test column or add test tag to test by tester.
-    
+
