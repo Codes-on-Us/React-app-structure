@@ -50,11 +50,14 @@
 	│   │   ├─ Types/
     │   │   ├─ Components /     # sub-components for home
     │   │   │   ├─ HeroBanner.ts
-    │   │    |    ├─ HeroBanner.module.scss
+    │   │   |   ├─ HeroBanner.module.scss
     │   │   │   └─ FeaturedList.ts
     ├─  Hooks /
 	├─  utils /                  # app-wide helpers & constants
     │   ├─ Extensions/
+    │   ├─ data/                 # static data
+    |   |   ├─ countryList.ts
+    |   |   └─ staticData.ts
     │   ├─ Assistances /
     │   ├─ formatDate.ts
     │   ├─ apiClient.ts
@@ -68,6 +71,24 @@
     │   │   ├── permissions.ts
     │   │   ├── profile.ts
     │   │   └── index.ts
+    ├─ i18n/                    # internationalization setup
+    │   ├─ index.ts            # i18n configuration
+    │   ├─ locales/            # translation files
+    │   │   ├─ en/
+    │   │   │   ├─ common.json
+    │   │   │   ├─ auth.json
+    │   │   │   └─ dashboard.json
+    │   │   ├─ es/
+    │   │   │   ├─ common.json
+    │   │   │   ├─ auth.json
+    │   │   │   └─ dashboard.json
+    │   │   └─ fr/
+    │   │       ├─ common.json
+    │   │       ├─ auth.json
+    │   │       └─ dashboard.json
+    │   └─ utils/
+    │       ├─ detectLanguage.ts
+    │       └─ formatters.ts
     ├─  App.ts                   # application shell: router + providers
     └─  index.ts                 # ReactDOM.render + global CSS imports
 
