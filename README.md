@@ -371,3 +371,177 @@ const transformUserData = (user: User): ProcessedUser => {
 - **Maintainability**: Changes to logic don't affect UI structure
 - **Readability**: Components are easier to understand and debug
 
+#### String Interpolation Safety
+Always handle null and undefined values when using variables in string interpolation to prevent displaying "null" or "undefined" in UI.
+
+**Safe String Interpolation:**
+- Use optional chaining and nullish coalescing
+- Provide fallback values for null/undefined variables
+- Validate data before string interpolation
+
+```typescript
+// ❌ Bad - Can display "null" or "undefined" in UI
+const UserGreeting: React.FC<{ user: User }> = ({ user }) => {
+  return (
+    <div>
+      <h1>Welcome ${user.firstName} ${user.lastName}!</h1>
+      <p>Email: ${user.email}</p>
+      <p>Phone: ${user.phone}</p>
+    </div>
+  );
+};
+
+// ❌ Bad - Template literal with potential null/undefined
+const message = `Hello ${user.name}, your balance is ${user.account.balance}`;
+
+// ✅ Good - Safe string interpolation with fallbacks
+const UserGreeting: React.FC<{ user: User }> = ({ user }) => {
+  return (
+    <div>
+      <h1>Welcome {user.firstName ?? ""} {user.lastName ?? ""}!</h1>
+      <p>Email: {user.email ?? 'Not provided'}</p>
+      <p>Phone: {user.phone ?? 'Not available'}</p>
+    </div>
+  );
+};
+
+// ✅ Good - Safe template literals
+const message = `Hello ${user.name ?? ""}, your balance is ${user.account?.balance ?? "0.00"}`;
+
+// ✅ Good - Simple empty string fallback to avoid displaying null/undefined
+const displayName = `${user.firstName ?? ""} ${user.lastName ?? ""}`.trim();
+const userInfo = `Name: ${user.name ?? ""} | Email: ${user.email ?? ""}`;
+
+// ✅ Good - Using utility function for safe string formatting
+const formatUserName = (firstName?: string, lastName?: string): string => {
+  const first = firstName?.trim() || '';
+  const last = lastName?.trim() || '';
+  return [first, last].filter(Boolean).join(' ') || 'Guest';
+};
+
+const UserGreeting: React.FC<{ user: User }> = ({ user }) => {
+  return (
+    <div>
+      <h1>Welcome {formatUserName(user.firstName, user.lastName)}!</h1>
+      <p>Email: {user.email || 'Not provided'}</p>
+    </div>
+  );
+};
+```
+
+**Best Practices for String Safety:**
+- **Use nullish coalescing (`??`)** for default values
+- **Use optional chaining (`?.`)** for nested properties
+- **Create utility functions** for complex string formatting
+- **Validate data types** before string operations
+- **Use TypeScript strict mode** to catch potential null/undefined issues
+
+#### State Management - Avoid Prop Drilling
+Don't pass React state through multiple nested components. Instead, use Redux slices or global state management for shared data.
+
+**Use Redux Slices Instead of Prop Drilling:**
+- Store shared state in Redux slices
+- Use selectors to access state in components
+- Avoid passing state through multiple component levels
+- Keep components decoupled from parent state
+
+```typescript
+// ❌ Bad - Passing state through multiple nested components
+const App: React.FC = () => {
+  const [user, setUser] = useState<User | null>(null);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+
+  return (
+    <Dashboard
+      user={user}
+      orders={orders}
+      notifications={notifications}
+      onUpdateUser={setUser}
+    />
+  );
+};
+
+const Dashboard: React.FC<DashboardProps> = ({ user, orders, notifications, onUpdateUser }) => {
+  return (
+    <div>
+      <Header user={user} notifications={notifications} />
+      <Sidebar user={user} />
+      <MainContent user={user} orders={orders} onUpdateUser={onUpdateUser} />
+    </div>
+  );
+};
+
+const MainContent: React.FC<MainContentProps> = ({ user, orders, onUpdateUser }) => {
+  return (
+    <div>
+      <UserProfile user={user} onUpdateUser={onUpdateUser} />
+      <OrderList orders={orders} user={user} />
+    </div>
+  );
+};
+
+// ✅ Good - Using Redux slices for shared state
+// store/userSlice.ts
+export const userSlice = createSlice({
+  name: 'user',
+  initialState: { user: null as User | null },
+  reducers: {
+    setUser: (state, action) => {
+      state.user = action.payload;
+    }
+  }
+});
+
+// store/ordersSlice.ts
+export const ordersSlice = createSlice({
+  name: 'orders',
+  initialState: { orders: [] as Order[] },
+  reducers: {
+    setOrders: (state, action) => {
+      state.orders = action.payload;
+    }
+  }
+});
+
+// Components access state directly without prop drilling
+const App: React.FC = () => {
+  return <Dashboard />;
+};
+
+const Dashboard: React.FC = () => {
+  return (
+    <div>
+      <Header />
+      <Sidebar />
+      <MainContent />
+    </div>
+  );
+};
+
+const UserProfile: React.FC = () => {
+  const user = useSelector((state: RootState) => state.user.user);
+  const dispatch = useDispatch();
+
+  const handleUpdateUser = (userData: User) => {
+    dispatch(userSlice.actions.setUser(userData));
+  };
+
+  return <div>{/* User profile UI */}</div>;
+};
+
+const OrderList: React.FC = () => {
+  const orders = useSelector((state: RootState) => state.orders.orders);
+  const user = useSelector((state: RootState) => state.user.user);
+
+  return <div>{/* Order list UI */}</div>;
+};
+```
+
+**Benefits of Using Redux Slices:**
+- **No Prop Drilling**: Components access state directly
+- **Better Performance**: Components only re-render when their specific state changes
+- **Cleaner Code**: Less prop passing and interface definitions
+- **Maintainability**: Easier to add/remove state without changing component signatures
+- **Testability**: Components can be tested independently of parent state
+
