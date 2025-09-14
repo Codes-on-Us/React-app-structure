@@ -129,6 +129,81 @@ Set up absolute imports with a  `jsconfig.json`  or  `tsconfig.json`  file.
 ![Branchs Approach
 ](https://raw.githubusercontent.com/Codes-on-Us/React-app-structure/refs/heads/main/branchsApproach.png)
 
+### HTTPS Development Setup
+
+For secure local development, use `mkcert` to generate trusted SSL certificates for localhost.
+
+#### Installation
+
+**macOS (using Homebrew):**
+```bash
+brew install mkcert
+```
+
+**Windows (using Chocolatey):**
+```bash
+choco install mkcert
+```
+
+**Linux (using wget):**
+```bash
+wget -O mkcert https://github.com/FiloSottile/mkcert/releases/download/v1.4.4/mkcert-v1.4.4-linux-amd64
+chmod +x mkcert
+sudo mv mkcert /usr/local/bin/
+```
+
+#### Generate Certificates
+
+```bash
+# Install the local CA
+mkcert -install
+
+# Generate certificate for localhost
+mkcert localhost 127.0.0.1 ::1
+```
+
+This creates two files:
+- `localhost+2.pem` (certificate)
+- `localhost+2-key.pem` (private key)
+
+#### Package.json Configuration
+
+```json
+{
+  "scripts": {
+    "start": "react-scripts start",
+    "start:https": "HTTPS=true SSL_CRT_FILE=localhost+2.pem SSL_KEY_FILE=localhost+2-key.pem react-scripts start",
+    "dev": "npm run start:https"
+  }
+}
+```
+
+**For Windows users:**
+```json
+{
+  "scripts": {
+    "start": "react-scripts start",
+    "start:https": "set HTTPS=true && set SSL_CRT_FILE=localhost+2.pem && set SSL_KEY_FILE=localhost+2-key.pem && react-scripts start",
+    "dev": "npm run start:https"
+  }
+}
+```
+
+#### Usage
+
+```bash
+# Start development server with HTTPS
+npm run dev
+
+# Your app will be available at: https://localhost:3000
+```
+
+**Benefits:**
+- ✅ Trusted certificates (no browser warnings)
+- ✅ Test HTTPS-only features (Service Workers, Web APIs)
+- ✅ Match production environment behavior
+- ✅ Required for some modern web APIs
+
 ### New future
 
  1. Clone live branch
