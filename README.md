@@ -1,4 +1,6 @@
 
+# React TypeScript App Structure & Clean Code Guidelines
+
 ## **React app sructure**
 
 
@@ -48,6 +50,12 @@
     │   │   ├─ HomePage.module.scss
     │   │   ├─ Stores/          # Redux slices
 	│   │   ├─ Types/
+    │   │   ├─ logic/           # page-specific business logic & custom hooks
+    │   │   │   ├─ useHomePage.ts
+    │   │   │   └─ useHomeData.ts
+    │   │   ├─ utils/           # page-specific utilities & helpers
+    │   │   │   ├─ homeHelpers.ts
+    │   │   │   └─ homeValidation.ts
     │   │   ├─ Components /     # sub-components for home
     │   │   │   ├─ HeroBanner.ts
     │   │   |   ├─ HeroBanner.module.scss
@@ -56,7 +64,7 @@
 	├─  utils /                  # app-wide helpers & constants
     │   ├─ Extensions/
     │   ├─ data/                 # static data
-    |   |   ├─ countryList.ts
+    |   |   ├─ countryList.ts     
     |   |   └─ staticData.ts
     │   ├─ Assistances /
     │   ├─ formatDate.ts
@@ -195,6 +203,7 @@ Filter.tsx
 - Use camelCase for variables, functions, and methods
 - Use descriptive names that explain what the variable holds or what the function does
 - Boolean variables should start with `is`, `has`, `can`, or `should`
+- Custom hooks must start with `use` prefix
 
 ```typescript
 // ✅ Good - Descriptive naming
@@ -206,6 +215,11 @@ const canUserEditProfile = checkEditPermissions();
 const handleUserProfileUpdate = (userData: User) => { ... };
 const fetchUserOrderHistory = async (userId: string) => { ... };
 
+// ✅ Good - Custom hooks with 'use' prefix
+const useUserAuth = () => { ... };
+const useApiRequest = (url: string) => { ... };
+const useLocalStorage = (key: string) => { ... };
+
 // ❌ Bad - Generic, unclear naming
 const token = getToken();
 const status = check();
@@ -213,6 +227,10 @@ const flag = validate();
 
 const handle = (data: any) => { ... };
 const fetch = async (id: string) => { ... };
+
+// ❌ Bad - Custom hooks without 'use' prefix
+const userAuth = () => { ... };
+const apiRequest = (url: string) => { ... };
 ```
 
 **Constants & Enums:**
@@ -248,4 +266,108 @@ enum Status {
   U = 'user'
 }
 ```
+
+#### Separation of Concerns - UI Logic
+Keep complex business logic separate from UI components to maintain clean, testable, and maintainable code.
+
+**Extract Complex Logic from Components:**
+- Move business logic to custom hooks
+- Use utility functions for data processing
+- Keep components focused on rendering and user interactions
+- Separate API calls from UI components
+
+```typescript
+// ❌ Bad - Complex logic mixed with UI
+const UserProfile: React.FC = () => {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (formData: FormData) => {
+    setLoading(true);
+    try {
+      // Complex validation logic
+      if (!formData.email || !formData.email.includes('@')) {
+        throw new Error('Invalid email');
+      }
+      if (formData.password.length < 8) {
+        throw new Error('Password too short');
+      }
+
+      // API call logic
+      const response = await fetch('/api/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      });
+
+      if (!response.ok) throw new Error('Failed to update');
+      const updatedUser = await response.json();
+      setUser(updatedUser);
+
+      // Complex data transformation
+      const processedData = {
+        ...updatedUser,
+        fullName: `${updatedUser.firstName} ${updatedUser.lastName}`,
+        isVerified: updatedUser.emailVerified && updatedUser.phoneVerified
+      };
+
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return <form onSubmit={handleSubmit}>{/* UI code */}</form>;
+};
+
+// ✅ Good - Separated concerns
+// Custom hook for business logic
+const useUserProfile = () => {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const updateUser = async (formData: FormData) => {
+    setLoading(true);
+    try {
+      const validatedData = validateUserData(formData);
+      const updatedUser = await userService.updateUser(validatedData);
+      const processedUser = transformUserData(updatedUser);
+      setUser(processedUser);
+    } catch (error) {
+      handleUserError(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return { user, loading, updateUser };
+};
+
+// UI Component - focused only on rendering
+const UserProfile: React.FC = () => {
+  const { user, loading, updateUser } = useUserProfile();
+
+  return (
+    <form onSubmit={updateUser}>
+      {loading ? <LoadingSpinner /> : <UserForm user={user} />}
+    </form>
+  );
+};
+
+// Separate utility functions
+const validateUserData = (formData: FormData): ValidatedUserData => {
+  // Validation logic
+};
+
+const transformUserData = (user: User): ProcessedUser => {
+  // Data transformation logic
+};
+```
+
+**Benefits of Separating UI Logic:**
+- **Testability**: Business logic can be tested independently
+- **Reusability**: Custom hooks can be shared across components
+- **Maintainability**: Changes to logic don't affect UI structure
+- **Readability**: Components are easier to understand and debug
 
