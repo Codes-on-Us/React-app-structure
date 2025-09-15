@@ -212,6 +212,103 @@ npm run dev
 
 
 
+### Page-Level Types Organization
+
+#### Types Folder Structure in Pages
+Each page should have its own `Types/` folder to organize page-specific type definitions. This keeps types close to where they're used while maintaining clean separation of concerns.
+
+**Page Types Organization:**
+```
+pages/
+├─  HomePage/
+│   ├─ HomePage.tsx
+│   ├─ Types/                    # Page-specific types
+│   │   ├─ props.ts             # Component props interfaces
+│   │   ├─ state.ts             # Local state types
+│   │   ├─ api.ts               # Page-specific API types
+│   │   └─ index.ts             # Barrel exports
+│   ├─ Components/
+│   ├─ logic/
+│   └─ utils/
+```
+
+**Example Implementation:**
+```typescript
+// pages/HomePage/Types/props.ts
+export interface HomePageProps {
+  initialData?: HomeData;
+  theme: 'light' | 'dark';
+}
+
+export interface HeroBannerProps {
+  title: string;
+  subtitle: string;
+  backgroundImage: string;
+  onCTAClick: () => void;
+}
+
+// pages/HomePage/Types/state.ts
+export interface HomePageState {
+  isLoading: boolean;
+  featuredProducts: Product[];
+  bannerData: BannerData;
+  error: string | null;
+}
+
+// pages/HomePage/Types/api.ts
+export interface HomePageApiResponse {
+  hero: HeroData;
+  featured: Product[];
+  announcements: Announcement[];
+}
+
+// pages/HomePage/Types/index.ts
+export * from './props';
+export * from './state';
+export * from './api';
+
+// Usage in HomePage component
+import { HomePageProps, HomePageState } from './Types';
+```
+
+#### Benefits of Page-Level Types
+
+**1. 📁 Localized Organization**
+- Types are co-located with the components that use them
+- Easy to find and modify page-specific type definitions
+- Clear ownership and responsibility for each page's types
+- Reduces cognitive load when working on specific features
+
+**2. 🔒 Encapsulation**
+- Page-specific types don't pollute the global type namespace
+- Prevents accidental usage of internal types in other pages
+- Better separation of concerns between different page modules
+- Easier to refactor page-specific logic without affecting others
+
+**3. 🧹 Cleaner Global Types**
+- Global `Types/` folder remains focused on truly shared types
+- Reduces clutter in the main types directory
+- Clear distinction between shared and page-specific types
+- Better organization for large applications
+
+**4. 🚀 Development Efficiency**
+- Faster type discovery when working on specific pages
+- Reduced import path complexity for page-level types
+- Better IDE support with localized type definitions
+- Easier onboarding for new developers working on specific features
+
+**5. 🔄 Maintainability**
+- Page-specific changes don't require global type updates
+- Easier to remove or modify pages without affecting shared types
+- Better version control with localized type changes
+- Reduced merge conflicts in type definitions
+
+**Best Practices:**
+- Use descriptive filenames (props.ts, state.ts, api.ts)
+- Always include barrel exports (index.ts)
+- Keep shared types in global `Types/` folder
+- Use consistent naming conventions across all pages
+
 ### Clean Code Principles
 
 #### Single Responsibility Principle
