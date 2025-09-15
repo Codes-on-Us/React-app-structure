@@ -1,6 +1,28 @@
 
 # React TypeScript App Structure & Clean Code Guidelines
 
+## Table of Contents
+
+### Structure & Organization
+- [React App Structure](#react-app-sructure)
+- [Absolute Imports](#absolute-imports)
+- [Page-Level Types Organization](#page-level-types-organization)
+
+### Development Workflow
+- [Branches](#branches)
+- [HTTPS Development Setup](#https-development-setup)
+- [New Future](#new-future)
+
+### Clean Code Guidelines
+- [Clean Code Principles](#clean-code-principles)
+- [Single Responsibility Principle](#single-responsibility-principle)
+- [Type Safety and Organization](#type-safety-and-organization)
+- [Naming Conventions](#naming-conventions)
+- [Separation of Concerns - UI Logic](#separation-of-concerns---ui-logic)
+- [String Interpolation Safety](#string-interpolation-safety)
+- [State Management - Avoid Prop Drilling](#state-management---avoid-prop-drilling)
+- [Concurrent Async Operations](#concurrent-async-operations)
+
 ## **React app sructure**
 
 
