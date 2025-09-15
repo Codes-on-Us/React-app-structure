@@ -22,6 +22,7 @@
 - [String Interpolation Safety](#string-interpolation-safety)
 - [State Management - Avoid Prop Drilling](#state-management---avoid-prop-drilling)
 - [Concurrent Async Operations](#concurrent-async-operations)
+- [External SCSS Styling](#external-scss-styling)
 
 ## **React app sructure**
 
@@ -882,4 +883,231 @@ const loadUserDataSafely = async (userId: string) => {
 - **Respect API rate limits** with batch processing
 - **Handle errors gracefully** with proper fallbacks
 - **Consider server load** - don't overwhelm backend services
+
+### External SCSS Styling
+
+#### Always Use External SCSS Files for Component Styling
+Create dedicated `.module.scss` files for each component instead of using inline styles. This approach provides better maintainability, performance, and follows React TypeScript best practices.
+
+**Component Structure with SCSS:**
+```
+Component/
+├─ Component.tsx
+├─ Component.module.scss
+├─ Component.test.ts
+└─ index.ts
+```
+
+**✅ Good - External SCSS Module:**
+```typescript
+// Button.tsx
+import styles from './Button.module.scss';
+
+interface ButtonProps {
+  variant?: 'primary' | 'secondary';
+  children: React.ReactNode;
+  onClick?: () => void;
+}
+
+const Button = ({ variant = 'primary', children, ...props }: ButtonProps) => {
+  return (
+    <button className={`${styles.button} ${styles[variant]}`} {...props}>
+      {children}
+    </button>
+  );
+};
+
+export default Button;
+```
+
+```scss
+// Button.module.scss
+.button {
+  padding: 12px 24px;
+  border-radius: 8px;
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &.primary {
+    background-color: var(--color-primary);
+    color: white;
+
+    &:hover {
+      background-color: var(--color-primary-dark);
+    }
+  }
+
+  &.secondary {
+    background-color: var(--color-gray-100);
+    color: var(--color-gray-800);
+
+    &:hover {
+      background-color: var(--color-gray-200);
+    }
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+```
+
+**❌ Bad - Inline Styles:**
+```typescript
+// Don't use inline styles
+const Button = ({ children }: ButtonProps) => {
+  return (
+    <button
+      style={{
+        padding: '12px 24px',
+        borderRadius: '8px',
+        border: 'none',
+        backgroundColor: '#007bff',
+        color: 'white'
+      }}
+    >
+      {children}
+    </button>
+  );
+};
+```
+
+#### SCSS Module Benefits
+
+**🎯 Performance Benefits:**
+- **Better Caching**: External SCSS files are cached by browsers
+- **Smaller Bundle Size**: CSS is extracted into separate files
+- **Optimized Rendering**: Browsers parse CSS faster than inline styles
+- **Tree Shaking**: Unused styles can be eliminated during build
+
+**🛠️ Development Benefits:**
+- **IDE Support**: Full autocomplete, syntax highlighting, and error detection
+- **Debugging**: Clear CSS file sources in browser DevTools
+- **Reusability**: Styles can be shared across components
+- **Version Control**: Better diff tracking and merge resolution
+
+**🎨 Design System Benefits:**
+- **CSS Variables**: Use custom properties for consistent theming
+- **Responsive Design**: Clean media queries and breakpoint management
+- **Animations**: Complex transitions and keyframe animations
+- **Pseudo-selectors**: Full support for :hover, :focus, :active states
+
+#### SCSS Best Practices
+
+**1. Use CSS Modules Naming:**
+```typescript
+// Always import as styles
+import styles from './Component.module.scss';
+
+// Use dot notation for class names
+<div className={styles.container}>
+  <h1 className={styles.title}>Title</h1>
+</div>
+```
+
+**2. Organize SCSS Structure:**
+```scss
+// Component.module.scss
+.component {
+  // Base styles first
+  display: flex;
+  padding: 16px;
+
+  // Modifiers
+  &.large {
+    padding: 24px;
+  }
+
+  &.disabled {
+    opacity: 0.5;
+  }
+
+  // Nested elements
+  .title {
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  .content {
+    margin-top: 8px;
+  }
+
+  // States
+  &:hover {
+    background-color: var(--color-hover);
+  }
+
+  // Media queries
+  @media (max-width: 768px) {
+    padding: 12px;
+  }
+}
+```
+
+**3. Use CSS Custom Properties:**
+```scss
+// Use CSS variables for dynamic values
+.progress {
+  width: 100%;
+  height: 8px;
+  background: var(--color-gray-200);
+  border-radius: 4px;
+
+  .fill {
+    height: 100%;
+    width: var(--progress-width, 0%);
+    background: var(--progress-color, var(--color-primary));
+    transition: width 0.3s ease;
+  }
+}
+```
+
+**4. Conditional Class Names:**
+```typescript
+// Use conditional classes instead of inline styles
+const Card = ({ isActive, size }: CardProps) => {
+  const cardClass = [
+    styles.card,
+    isActive && styles.active,
+    styles[size]
+  ].filter(Boolean).join(' ');
+
+  return <div className={cardClass}>Content</div>;
+};
+```
+
+#### Migration from Inline Styles
+
+**Step 1: Create SCSS Module File**
+```bash
+# Create alongside component
+touch Component.module.scss
+```
+
+**Step 2: Move Inline Styles to SCSS**
+```typescript
+// Before: Inline styles
+<div style={{ padding: '16px', backgroundColor: '#fff' }}>
+
+// After: SCSS module
+<div className={styles.container}>
+```
+
+```scss
+// Component.module.scss
+.container {
+  padding: 16px;
+  background-color: #fff;
+}
+```
+
+**Step 3: Update Import and Usage**
+```typescript
+import styles from './Component.module.scss';
+```
+
+**Remember:** External SCSS files provide better performance, maintainability, and development experience compared to inline styles.
 
